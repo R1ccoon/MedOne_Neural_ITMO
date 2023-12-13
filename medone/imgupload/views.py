@@ -1,23 +1,41 @@
-from django.shortcuts import render
-from .forms import ImageForm
-from PIL import Image
+from django.http import JsonResponse
+from .serializers import AttendanceSerializer
+from rest_framework.views import APIView
 
 
-def image_upload_view(request):
+class image_upload_view(APIView):
     """Process images uploaded by users"""
-    if request.method == 'POST':
-        print(request.FILES)
-        print(request.POST)
-        form = ImageForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
+    def post(self, request):
+        title = request.data['title']
+        serializer_class = AttendanceSerializer(data=request.data)
+        if serializer_class.is_valid():
+            serializer_class.save()
 
-            # Get the current instance object to display in the template
-            img_obj = form.instance
-            im1 = Image.open(fr"{img_obj.image.url[1:]}")
-            im1.save(fr'media/images/{img_obj.title}.png')
-
-            return render(request, 'index.html', {'form': form, 'img_obj': img_obj})
-    else:
-        form = ImageForm()
-        return render(request, 'index.html', {'form': form})
+            data = {
+                "columns": {"name": "название анализа", "result": "Численный результат",
+                            "norm": "численная норма анализа"},
+                "rows": [
+                    {"is_composite_analysis": True, "name": "Анализ крови"},
+                    {"is_composite_analysis": False, "name": "Анализ на эритроциты", "value": "116", "norm": "",
+                     "measurement_unit": "г/л"},
+                    {"is_composite_analysis": False, "name": "Анализ на эритроциты", "value": "116", "norm": "130-160",
+                     "measurement_unit": "г/л"},
+                    {"is_composite_analysis": False, "name": "Анализ на эритроциты", "value": "116", "norm": "130-160",
+                     "measurement_unit": "г/л"},
+                    {"is_composite_analysis": False, "name": "Анализ на эритроциты", "value": "116", "norm": "130-160",
+                     "measurement_unit": "г/л"},
+                    {"is_composite_analysis": False, "name": "Анализ на эритроциты", "value": "116", "norm": "130-160",
+                     "measurement_unit": "г/л"},
+                    {"is_composite_analysis": False, "name": "Анализ на эритроциты", "value": "116", "norm": "130-160",
+                     "measurement_unit": "г/л"},
+                    {"is_composite_analysis": False, "name": "Анализ на эритроциты", "value": "116", "norm": "130-160",
+                     "measurement_unit": "г/л"},
+                ]
+            }
+            return JsonResponse(data)
+        else:
+            print(serializer_class.errors)
+            data = {
+                'error': 'xz'
+            }
+            return JsonResponse(data)

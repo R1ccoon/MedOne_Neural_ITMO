@@ -19,7 +19,7 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
-    path("img/", include("imgupload.urls")),
+    path("photo_analysis/", include(("imgupload.urls", "imgupload"), namespace="imgupload")),
     path('admin/', admin.site.urls),
 ]
 
