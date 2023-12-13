@@ -34,8 +34,7 @@ class image_upload_view(APIView):
             }
             return JsonResponse(data)
         else:
-            print(serializer_class.errors)
             data = {
-                'error': 'xz'
+                'error': serializer_class.errors
             }
             return JsonResponse(data)
