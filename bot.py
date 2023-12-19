@@ -14,7 +14,11 @@ def send_photo_to_backend(photo):
     title = str(uuid.uuid4())[:8]
     response = requests.post("http://localhost:8000" + "/photo_analysis/",
                              data={'title': title, 'image': data_url})
-    data = response.json()
+
+    try:
+        data = response.json()
+    except:
+        data = None
 
     # data = {
     #     "columns": {"name": "название анализа", "result": "Численный результат", "norm": "численная норма анализа"},
@@ -34,6 +38,8 @@ def send_photo_to_backend(photo):
 
 
 def raw_to_table(data):
+    if data is None:
+        return "Ошибка в сканировании фотографии. Попробуй заново."
     data = data.replace("true", "True")
     data = data.replace("false", "False")
     data = eval(data)
