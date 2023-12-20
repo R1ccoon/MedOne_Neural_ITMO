@@ -3,7 +3,7 @@ import sqlite3
 from django.http import JsonResponse
 from .serializers import AttendanceSerializer
 from rest_framework.views import APIView
-from .bard import start_recognition
+from .gemini import start_recognition
 from PIL import Image
 
 
@@ -21,8 +21,6 @@ class image_upload_view(APIView):
             img = cursor.fetchall()
             f = Image.open(f"./media/{img[0][0]}")
             data = start_recognition(f)
-            print(data)
-
             return JsonResponse(data, safe=False)
         else:
             data = {
